@@ -85,7 +85,7 @@ public class InputHandler implements ActionListener, MouseListener, KeyListener 
         am.put("shift-pressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Player.isDashing = 15;
+                //Player.isDashing = 15;
             }
         });
         am.put("shift-released", new AbstractAction() {
@@ -128,10 +128,9 @@ public class InputHandler implements ActionListener, MouseListener, KeyListener 
         int x = e.getX();
         int y = e.getY();
 
-        player.isDashing = 20;
-        player.targetX = x;
-        player.targetY = y;
-        System.out.println("X: "+x+" Y:"+y);
+        Player.isDashing = 20;
+        Player.targetX = x;
+        Player.targetY = y;
     }
 
     @Override

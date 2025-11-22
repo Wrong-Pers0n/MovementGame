@@ -4,6 +4,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.*;
@@ -19,11 +20,14 @@ public class Main {
     static Player player;
     InputHandler input = new InputHandler(this);
     TestEntity test;
+    public static ArrayList<RectangleCollider> colliders = new ArrayList<>();
 
 
     private void Update() {
         player.update();
         test.update();
+
+
     }
 
 
@@ -55,6 +59,8 @@ public class Main {
 
         player = new Player(this, renderer);
         test = new TestEntity();
+        RectangleCollider collider = new RectangleCollider(100, 100, 20, 160);
+        colliders.add(collider);
 
         Timer renderTimer = new Timer();
         TimerTask renderTimerLoop = new TimerTask() {

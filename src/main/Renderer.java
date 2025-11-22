@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.logging.*;
 
 import static main.Initializer.scale;
+import static main.Main.colliders;
 import static main.Main.player;
 
 public class Renderer extends Formatter {
@@ -29,6 +30,10 @@ public class Renderer extends Formatter {
         //renderImage(gl, main.getImg(), 0, 0, 50, 50);
         player.render(gl);
         main.test.render(gl);
+
+        for(RectangleCollider collider : colliders) {
+            collider.render(gl);
+        }
     }
 
     @Override

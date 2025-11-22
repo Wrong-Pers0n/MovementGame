@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
 import static main.Initializer.scale;
+import static main.Main.colliders;
 
 public class Player implements Entity {
 
@@ -23,12 +24,15 @@ public class Player implements Entity {
     static float angle = 0;
     float moveSpeed = 3f;
     float dashSpeed = moveSpeed * 2.5f;
-    int targetX, targetY;
+    public static int targetX, targetY;
+    RectangleCollider hitbox;
 
     public Player(Main main, Renderer renderer) {
         Player.main = main;
         Player.renderer = renderer;
         initializeTextures();
+        this.hitbox = new RectangleCollider(x,y,width,height);
+        //colliders.add(hitbox);
 
     }
 
@@ -88,20 +92,56 @@ public class Player implements Entity {
     @Override
     public void render(GL2 gl) {
         Renderer.renderImage(gl, image, x, y, width, height);
+
     }
 
     @Override
     public void move(float speed, float angle) {
         double radians = Math.toRadians(angle);
 
-        x += (float) (Math.cos(radians) * speed);
-        y += (float) (Math.sin(radians) * speed);
+        float destX = x + (float) (Math.cos(radians) * speed);
+        float destY = y + (float) (Math.sin(radians) * speed);
+        if(checkForCollision(destX, destY)) {
+            destX = x + (float) (Math.cos(radians) * speed / 3);
+            destY = y + (float) (Math.sin(radians) * speed / 3);
+            if(checkForCollision(destX, destY)) { return; }
+        }
+        x = destX;
+        y = destY;
+        hitbox.x = destX;
+        hitbox.y = destY;
+
     }
 
     @Override
     public void moveTo(float speed, float destinationX, float destinationY) {
-        double angle = Math.atan2(destinationY/scale - y, destinationX/scale - x);
-        x += (float) (Math.cos(angle) * speed);
-        y += (float) (Math.sin(angle) * speed);
+        double radians = Math.atan2(destinationY/scale - y, destinationX/scale - x);
+
+
+        float destX = x + (float) (Math.cos(radians) * speed);
+        float destY = y + (float) (Math.sin(radians) * speed);
+        if(checkForCollision(destX, destY)) {
+            destX = x + (float) (Math.cos(radians) * speed / 3);
+            destY = y + (float) (Math.sin(radians) * speed / 3);
+            if(checkForCollision(destX, destY)) { return; }
+        }
+        x = destX;
+        y = destY;
+        hitbox.x = destX;
+        hitbox.y = destY;
+
+
+    }
+
+    private boolean checkForCollision(float destX, float destY) {
+        CollisionResult result = CollisionChecker.moveWithCollision(hitbox, destX, destY, colliders);
+
+        if (result.collider != null) {
+            //System.out.println("Collided with object at: " + result.collider.pos.x + ", " + result.collider.pos.y);
+            //System.out.println("Hitbox would stop at: " + result.hitPosition.x + ", " + result.hitPosition.y);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
