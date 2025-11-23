@@ -22,8 +22,8 @@ class Vector2 {
         return new Vector2(this.x - other.x, this.y - other.y);
     }
 
-    public Vector2 scale(double scalar) {
-        return new Vector2(this.x * scalar, this.y * scalar);
+    public Vector2 scale(double scale) {
+        return new Vector2(this.x * scale, this.y * scale);
     }
 
     public double length() {
@@ -37,9 +37,10 @@ class Vector2 {
     }
 }
 
+// basically any collision thing, like, for example, the floor or the wall
 class RectangleCollider {
-    public Vector2 pos;  // top-left
-    public Vector2 size; // width & height
+    public Vector2 pos;  // top left position
+    public Vector2 size; // width and height
     BufferedImage image;
     double x, y, width, height;
 
@@ -65,9 +66,10 @@ class RectangleCollider {
     }
 }
 
+// fancy return option
 class CollisionResult {
-    public RectangleCollider collider; // object hit
-    public Vector2 hitPosition;        // final position before collision
+    public RectangleCollider collider; // the collider we hit
+    public Vector2 hitPosition;        // the position of the moving this right before it hits the collider
 
     public CollisionResult(RectangleCollider collider, Vector2 hitPosition) {
         this.collider = collider;
@@ -77,31 +79,20 @@ class CollisionResult {
 
 public class CollisionChecker {
 
-    /**
-     * Moves a rectangle toward a destination, detecting collisions along each axis.
-     *
-     * @param hitbox    The moving rectangle
-     * @param destX     Destination X
-     * @param destY     Destination Y
-     * @param colliders List of possible colliders
-     * @return CollisionResult with first collider hit (if any) and stop position, or null if no collision
-     */
-    public static CollisionResult moveWithCollision(RectangleCollider hitbox, double destX, double destY,
-                                                    ArrayList<RectangleCollider> colliders) {
+    public static CollisionResult moveWithCollision(RectangleCollider hitbox, double destX, double destY, ArrayList<RectangleCollider> colliders) {
+        // finds how far it has to move in x and y
         double moveX = destX - hitbox.pos.x;
         double moveY = destY - hitbox.pos.y;
-
         double finalX = hitbox.pos.x;
         double finalY = hitbox.pos.y;
 
         RectangleCollider firstCollider = null;
 
-        // Step 1: Move along X
+        // Check along the x axis
         if (moveX != 0) {
             double targetX = hitbox.pos.x + moveX;
             for (RectangleCollider other : colliders) {
-                if (aabbIntersect(targetX, finalY, hitbox.size.x, hitbox.size.y,
-                        other.pos.x, other.pos.y, other.size.x, other.size.y)) {
+                if (aabbIntersect(targetX, finalY, hitbox.size.x, hitbox.size.y, other.pos.x, other.pos.y, other.size.x, other.size.y)) {
                     firstCollider = other;
                     if (moveX > 0) targetX = other.pos.x - hitbox.size.x;
                     else           targetX = other.pos.x + other.size.x;
@@ -110,7 +101,7 @@ public class CollisionChecker {
             finalX = targetX;
         }
 
-        // Step 2: Move along Y
+        // check along the y axis
         if (moveY != 0) {
             double targetY = hitbox.pos.y + moveY;
             for (RectangleCollider other : colliders) {
@@ -124,17 +115,11 @@ public class CollisionChecker {
             finalY = targetY;
         }
 
-        return firstCollider != null
-                ? new CollisionResult(firstCollider, new Vector2(finalX, finalY))
-                : new CollisionResult(null, new Vector2(finalX, finalY));
+        return firstCollider != null ? new CollisionResult(firstCollider, new Vector2(finalX, finalY)) : new CollisionResult(null, new Vector2(finalX, finalY));
     }
 
-    /**
-     * Simple AABB collision check.
-     */
-    private static boolean aabbIntersect(double x1, double y1, double w1, double h1,
-                                         double x2, double y2, double w2, double h2) {
-        return x1 < x2 + w2 && x1 + w1 > x2 &&
-                y1 < y2 + h2 && y1 + h1 > y2;
+    // some sort of magic idk
+    private static boolean aabbIntersect(double x1, double y1, double w1, double h1, double x2, double y2, double w2, double h2) {
+        return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
     }
 }

@@ -26,7 +26,7 @@ public class TestEntity implements  Entity{
         Renderer.renderImage(gl, image, x, y, width, height);
     }
     @Override
-    public void move(float speed, float angle) {
+    public void moveAtAngle(float speed, float angle) {
         double radians = Math.toRadians(angle);
 
         x += (float) (Math.cos(radians) * speed);
@@ -58,5 +58,10 @@ public class TestEntity implements  Entity{
 
         // Dispose the graphics object
         g2d.dispose();
+    }
+
+    @Override
+    public void move(float angle) {
+
     }
 }

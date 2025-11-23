@@ -13,6 +13,7 @@ public class Main {
 
     private static Renderer renderer;
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+    public static UtilityTool uTool = new UtilityTool();
     BufferedImage image;
     Boolean debug = true;
     long startTime;
@@ -21,6 +22,8 @@ public class Main {
     InputHandler input = new InputHandler(this);
     TestEntity test;
     public static ArrayList<RectangleCollider> colliders = new ArrayList<>();
+
+    public static final float gravitySpeed = 0.5f;
 
 
     private void Update() {
@@ -40,18 +43,6 @@ public class Main {
         renderer.main = this;
 
 
-        image = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
-
-        // Get the Graphics2D object from the image
-        Graphics2D g2d = image.createGraphics();
-
-        // Set the color to blue and fill the square
-        g2d.setColor(Color.RED);
-        g2d.fillRect(0, 0, 25, 25);
-
-        // Dispose the graphics object
-        g2d.dispose();
-
         System.out.println("Main initialized");
     }
 
@@ -59,8 +50,10 @@ public class Main {
 
         player = new Player(this, renderer);
         test = new TestEntity();
-        RectangleCollider collider = new RectangleCollider(100, 100, 20, 160);
+        RectangleCollider collider = new RectangleCollider(100, 350, 200, 20);
+        RectangleCollider collider2 = new RectangleCollider(300, 330, 200, 20);
         colliders.add(collider);
+        colliders.add(collider2);
 
         Timer renderTimer = new Timer();
         TimerTask renderTimerLoop = new TimerTask() {
@@ -97,11 +90,6 @@ public class Main {
         logicTimer.scheduleAtFixedRate(logicTimerLoop, 0, 1000 / logicFramerate);
 
 
-    }
-
-
-    public BufferedImage getImg() {
-        return image;
     }
 
 

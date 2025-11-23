@@ -13,7 +13,7 @@ import static main.Initializer.scale;
 import static main.Main.colliders;
 import static main.Main.player;
 
-public class Renderer extends Formatter {
+public class Renderer {
     static public GLJPanel glPanel = null;
     static Main main;
     public static float globalXOffset = 0;
@@ -34,12 +34,6 @@ public class Renderer extends Formatter {
         for(RectangleCollider collider : colliders) {
             collider.render(gl);
         }
-    }
-
-    @Override
-    public String format(LogRecord record) {
-        // Everything on one line:
-        return record.getLoggerName() + ": " + record.getMessage() + "\n";
     }
 
 
@@ -114,7 +108,7 @@ public class Renderer extends Formatter {
     public static void renderImage(GL gl, BufferedImage image, float x, float y, float width, float height, float opacity) {
         if (image == null) return;
 
-        GL2 gl2 = gl.getGL2(); // legacy GL calls for simplicity
+        GL2 gl2 = gl.getGL2();
         Texture texture = AWTTextureIO.newTexture(GLProfile.getDefault(), image, true);
 
         gl2.glEnable(GL2.GL_TEXTURE_2D);
@@ -141,7 +135,7 @@ public class Renderer extends Formatter {
     public static void renderImage(GL gl, BufferedImage image, float x, float y, float width, float height) {
         if (image == null) return;
 
-        GL2 gl2 = gl.getGL2(); // legacy GL calls for simplicity
+        GL2 gl2 = gl.getGL2();
         Texture texture = AWTTextureIO.newTexture(GLProfile.getDefault(), image, true);
 
         gl2.glEnable(GL2.GL_TEXTURE_2D);
@@ -164,11 +158,6 @@ public class Renderer extends Formatter {
     }
 
     public Renderer(String title, int width, int height, float scale) {
-
-
-
-
-
         init(title, width, height);
     }
 }
