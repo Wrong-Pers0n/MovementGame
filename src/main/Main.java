@@ -15,7 +15,7 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static UtilityTool uTool = new UtilityTool();
     BufferedImage image;
-    Boolean debug = true;
+    Boolean debug = false;
     long startTime;
     int currentLogicFps;
     static Player player;
@@ -50,10 +50,13 @@ public class Main {
 
         player = new Player(this, renderer);
         test = new TestEntity();
-        RectangleCollider collider = new RectangleCollider(100, 350, 200, 20);
+        RectangleCollider collider = new RectangleCollider(100, 350, 200, 30);
         RectangleCollider collider2 = new RectangleCollider(300, 330, 200, 20);
         colliders.add(collider);
         colliders.add(collider2);
+        for(int i = 1; i < 100; i++) {
+            colliders.add(new RectangleCollider(-25*i, 900, 20, 20));
+        }
 
         Timer renderTimer = new Timer();
         TimerTask renderTimerLoop = new TimerTask() {
@@ -75,13 +78,16 @@ public class Main {
 
                 if(debug) {
                     long endTime = System.nanoTime();
-                    long duration = endTime - startTime;
+                    double duration = endTime - startTime;
+
                     duration = duration / 1000000; // Convert it to ms cuz fuck ns
+                    //System.out.println(duration);
                     try {
                         currentLogicFps = (int) Math.floor((double) 1000 / duration); // now converts it to fps
                     }catch(Exception e) {
                         currentLogicFps = -1;
                     }
+                    System.out.println(currentLogicFps);
 
                 }
             }

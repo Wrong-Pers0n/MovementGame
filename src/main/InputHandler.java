@@ -7,7 +7,7 @@ import java.awt.event.*;
 import static main.Initializer.scale;
 import static main.Main.player;
 import static main.Main.uTool;
-import static main.Renderer.glPanel;
+import static main.Renderer.*;
 
 
 public class InputHandler implements ActionListener, MouseListener, KeyListener {
@@ -140,8 +140,8 @@ public class InputHandler implements ActionListener, MouseListener, KeyListener 
 
         Player.isAttackDashing = true;
         Player.isDashing = 0;
-        Player.targetX = (int) (x - Player.width/2f);
-        Player.targetY = (int) (y - Player.height/2f);
+        Player.targetX = (int) (x - Player.width/2f + globalXOffset*scale);
+        Player.targetY = (int) (y - Player.height/2f + globalYOffset*scale);
     }
 
     @Override

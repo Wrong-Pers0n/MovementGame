@@ -133,7 +133,7 @@ public class Renderer {
     }
 
     public static void renderImage(GL gl, BufferedImage image, float x, float y, float width, float height) {
-        if (image == null) return;
+        if (image == null || Math.abs(x - globalXOffset) > Initializer.originalWidth*1.2 || Math.abs(y - globalYOffset) > Initializer.originalHeight*1.2) return;
 
         GL2 gl2 = gl.getGL2();
         Texture texture = AWTTextureIO.newTexture(GLProfile.getDefault(), image, true);

@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 
 import static main.Initializer.scale;
 import static main.Main.*;
+import static main.Renderer.globalXOffset;
+import static main.Renderer.globalYOffset;
 
 public class Player implements Entity {
 
@@ -25,10 +27,11 @@ public class Player implements Entity {
     static float angle = 0;
     public static int targetX, targetY;
 
-    public static float x = 10;
-    public static float y = 0;
     public static float width = 20;
     public static float height = 20;
+    public static float x = 320-width/2;
+    public static float y = 180-height/2;
+
 
 
     public static int isDashing = 0;
@@ -105,8 +108,13 @@ public class Player implements Entity {
             destX = x + xMomentum*dir;
             if(checkForCollision(destX, y)) return;
         }
+
+        globalXOffset += destX-x;
+
         x = destX;
         hitbox.x = destX;
+
+
     }
 
     @Override
@@ -128,11 +136,16 @@ public class Player implements Entity {
                     destY = y + (float) (Math.sin(radians) / Math.abs(Math.sin(radians)));
                 }
                 if(!checkForCollision(destX, destY)) { break; }
-                if(i == limit-1) return;
+
+                if(i == limit-1) {
+                    isDashing = 1;
+                    return;
+                }
 
             }
         }
-
+        globalXOffset += destX-x;
+        globalYOffset += destY-y;
         x = destX;
         y = destY;
         hitbox.x = destX;
@@ -144,9 +157,7 @@ public class Player implements Entity {
         if(yMomentum < maxFallSpeed) yMomentum += gravitySpeed;
         float destY = y + yMomentum;
 
-
         if(checkForCollision(x, destY)) {
-
             yMomentum /= 2;
 
             destY = y + yMomentum;
@@ -154,11 +165,13 @@ public class Player implements Entity {
                 yMomentum = 0;
                 onGround = true;
             } else {
+                globalYOffset += destY-y;
                 y = destY;
                 hitbox.y = destY;
             }
         } else {
             onGround = false;
+            globalYOffset += destY-y;
             y = destY;
             hitbox.y = destY;
         }
@@ -189,6 +202,8 @@ public class Player implements Entity {
 
             }
         }
+        globalXOffset += destX-x;
+        globalYOffset += destY-y;
         x = destX;
         y = destY;
         hitbox.x = destX;
@@ -200,11 +215,21 @@ public class Player implements Entity {
         CollisionResult result = CollisionChecker.moveWithCollision(hitbox, destX, destY, colliders);
 
         if (result.collider != null) {
-            System.out.println("Collided with object at: " + result.collider.pos.x + ", " + result.collider.pos.y);
-            System.out.println("Hitbox would stop at: " + result.hitPosition.x + ", " + result.hitPosition.y);
-            System.out.println("X: " + x + ", Y:" + y);
+
+            double difX = result.hitPosition.x-x;
+            double difY = result.hitPosition.y-y;
+
+            if(difX != 0 && difY != 0) System.out.println("Wrong collision spot. DifX: "+difX+" DifY: "+difY);
+
+            //System.out.println(result.hitPosition.x);
+            //System.out.println(result.hitPosition.y);
+            
+
+            //System.out.println(direction);
             return true;
         } else {
+            //System.out.println(result.hitPosition.x);
+            //System.out.println(result.hitPosition.y);
             return false;
         }
     }

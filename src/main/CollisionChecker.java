@@ -91,7 +91,11 @@ public class CollisionChecker {
         // Check along the x axis
         if (moveX != 0) {
             double targetX = hitbox.pos.x + moveX;
+            double minX = Math.min(hitbox.pos.x, hitbox.pos.x + moveX);
+            double maxX = Math.max(hitbox.pos.x + hitbox.size.x, hitbox.pos.x + hitbox.size.x + moveX);
             for (RectangleCollider other : colliders) {
+                if (other.pos.x + other.size.x < minX) continue;
+                if (other.pos.x > maxX) continue;
                 if (aabbIntersect(targetX, finalY, hitbox.size.x, hitbox.size.y, other.pos.x, other.pos.y, other.size.x, other.size.y)) {
                     firstCollider = other;
                     if (moveX > 0) targetX = other.pos.x - hitbox.size.x;
@@ -104,7 +108,11 @@ public class CollisionChecker {
         // check along the y axis
         if (moveY != 0) {
             double targetY = hitbox.pos.y + moveY;
+            double minY = Math.min(hitbox.pos.y, hitbox.pos.y + moveY);
+            double maxY = Math.max(hitbox.pos.y + hitbox.size.y, hitbox.pos.y + hitbox.size.y + moveY);
             for (RectangleCollider other : colliders) {
+                if (other.pos.y + other.size.y < minY) continue;
+                if (other.pos.y > maxY) continue;
                 if (aabbIntersect(finalX, targetY, hitbox.size.x, hitbox.size.y,
                         other.pos.x, other.pos.y, other.size.x, other.size.y)) {
                     firstCollider = other;
@@ -119,6 +127,10 @@ public class CollisionChecker {
     }
 
     // some sort of magic idk
+    // x - x value
+    // y - y value
+    // w - width
+    // h - height
     private static boolean aabbIntersect(double x1, double y1, double w1, double h1, double x2, double y2, double w2, double h2) {
         return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
     }

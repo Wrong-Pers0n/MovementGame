@@ -7,6 +7,8 @@ import java.util.logging.*;
 public class Initializer extends JPanel {
 
     public static float scale;
+    public static final float originalWidth  = 640;
+    public static final float originalHeight = 360;
 
     static void main (String args[]) {
         SwingUtilities.invokeLater(() -> {
@@ -15,8 +17,6 @@ public class Initializer extends JPanel {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             float windowWidth    = (float) screenSize.getWidth();
             float windowHeight   = (float) screenSize.getHeight();
-            float originalWidth  = 640;
-            float originalHeight = 360;
 
             scale = windowHeight / originalHeight;
             System.out.println("Window size calculated");
