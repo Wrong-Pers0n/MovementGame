@@ -4,6 +4,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,13 +16,15 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static UtilityTool uTool = new UtilityTool();
     BufferedImage image;
-    Boolean debug = false;
+    Boolean debug = true;
     long startTime;
-    int currentLogicFps;
+    double currentLogicFps;
     static Player player;
     InputHandler input = new InputHandler(this);
     TestEntity test;
     public static ArrayList<RectangleCollider> colliders = new ArrayList<>();
+    int fps = 0;
+    long end = 0;
 
     public static final float gravitySpeed = 0.5f;
 
@@ -54,7 +57,7 @@ public class Main {
         RectangleCollider collider2 = new RectangleCollider(300, 330, 200, 20);
         colliders.add(collider);
         colliders.add(collider2);
-        for(int i = 1; i < 100; i++) {
+        for(int i = 1; i < 1; i++) {
             colliders.add(new RectangleCollider(-25*i, 900, 20, 20));
         }
 
@@ -78,22 +81,36 @@ public class Main {
 
                 if(debug) {
                     long endTime = System.nanoTime();
-                    double duration = endTime - startTime;
+                    long duration = endTime - startTime;
 
-                    duration = duration / 1000000; // Convert it to ms cuz fuck ns
-                    //System.out.println(duration);
-                    try {
-                        currentLogicFps = (int) Math.floor((double) 1000 / duration); // now converts it to fps
-                    }catch(Exception e) {
-                        currentLogicFps = -1;
-                    }
-                    System.out.println(currentLogicFps);
-
+                    end += duration; // Convert it to ms cuz fuck ns
+                    //System.out.println(end);
                 }
             }
         };
         int logicFramerate = 60;
         logicTimer.scheduleAtFixedRate(logicTimerLoop, 0, 1000 / logicFramerate);
+
+
+        Timer debugTimer = new Timer();
+        TimerTask debugTimerLoop = new TimerTask() {
+            @Override
+            public void run() {
+                //System.out.println(fps);
+                try {
+                    currentLogicFps = 1000 / (end / 1000000.0 /60.0); // now converts it to fps
+                }catch(Exception e) {
+                    //currentLogicFps = -1;
+                }
+
+                fps = (int) (currentLogicFps);
+
+                System.out.println("Current FPS: "+fps+", Average time to compute frame: "+Math.round(end / 1000000.0 /60.0 * 1e7) / 1e7+"ms");
+                currentLogicFps = 0;
+                end = 0;
+            }
+        };
+        debugTimer.scheduleAtFixedRate(debugTimerLoop, 0, 1000);
 
 
     }
